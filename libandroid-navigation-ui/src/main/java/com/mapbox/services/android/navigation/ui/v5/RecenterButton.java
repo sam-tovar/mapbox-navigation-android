@@ -4,9 +4,13 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.TranslateAnimation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Button used to re-activate following user location during navigation.
@@ -20,8 +24,9 @@ import android.view.animation.TranslateAnimation;
  *
  * @since 0.6.0
  */
-public class RecenterButton extends CardView {
+public class RecenterButton extends CardView implements NavigationButton {
 
+  private List<OnClickListener> onClickListeners;
   private Animation slideUpBottom;
 
   public RecenterButton(Context context) {
@@ -42,6 +47,7 @@ public class RecenterButton extends CardView {
    *
    * @since 0.6.0
    */
+  @Override
   public void show() {
     if (getVisibility() == INVISIBLE) {
       setVisibility(VISIBLE);
@@ -50,10 +56,23 @@ public class RecenterButton extends CardView {
   }
 
   /**
+   * Adds an onClickListener to the button
+   *
+   * @param onClickListener to add
+   */
+  @Override
+  public void addOnClickListener(OnClickListener onClickListener) {
+    if (!onClickListeners.contains(onClickListener)) {
+      onClickListeners.add(onClickListener);
+    }
+  }
+
+  /**
    * Sets visibility to INVISIBLE.
    *
    * @since 0.6.0
    */
+  @Override
   public void hide() {
     if (getVisibility() == VISIBLE) {
       setVisibility(INVISIBLE);
@@ -67,7 +86,21 @@ public class RecenterButton extends CardView {
   @Override
   protected void onFinishInflate() {
     super.onFinishInflate();
+    setupOnClickListeners();
     initAnimation();
+  }
+
+  private void setupOnClickListeners() {
+    onClickListeners = new ArrayList<>();
+
+    setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        for (OnClickListener onClickListener : onClickListeners) {
+          onClickListener.onClick(view);
+        }
+      }
+    });
   }
 
   /**
