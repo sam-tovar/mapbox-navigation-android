@@ -28,6 +28,7 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode;
 import com.mapbox.services.android.navigation.testapp.R;
+import com.mapbox.services.android.navigation.ui.v5.NavigationView;
 import com.mapbox.services.android.navigation.ui.v5.instruction.InstructionView;
 import com.mapbox.services.android.navigation.v5.location.replay.ReplayRouteLocationEngine;
 import com.mapbox.services.android.navigation.v5.milestone.Milestone;
@@ -58,6 +59,8 @@ public class OfflineRerouteActivity extends AppCompatActivity implements OnMapRe
   View contentLayout;
   @BindView(R.id.instructionView)
   InstructionView instructionView;
+  @BindView(R.id.navigationView)
+  NavigationView navigationView;
 
   private Point origin = Point.fromLngLat(-1.220722, 51.757772);
   private Point destination = Point.fromLngLat(-1.2206, 51.757);
@@ -91,9 +94,10 @@ public class OfflineRerouteActivity extends AppCompatActivity implements OnMapRe
     String translationsDirPath = obtainOfflineDirectoryFor("translations");
     Timber.d("Translations directory path: %s", translationsDirPath);
 
-    navigation.initializeOfflineData(tilesDirPath, translationsDirPath);
-    route = navigation.findOfflineRouteFor(origin, destination);
-    checkRoute();
+    navigationView.initializeOfflineData(tilesDirPath, translationsDirPath);
+    navigationView.setOffline(true);
+//    route = navigation.findOfflineRouteFor(origin, destination);
+//    checkRoute();
 
     mapView.getMapAsync(this);
   }
